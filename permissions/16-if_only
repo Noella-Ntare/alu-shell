@@ -1,2 +1,2 @@
 #!/bin/bash
-if [ -e hello ]; then if [ "$(ls -l hello | awk '{print $3}')" == "guillaume" ]; then sudo chown vincent hello; fi; fi
+if [ -e hello ] then if [ "$(ls -l hello | awk '{print $3}')" == "guillaume" ] then sudo chown vincent hello fi
