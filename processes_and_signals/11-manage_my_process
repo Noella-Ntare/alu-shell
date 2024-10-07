@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Infinite loop to write "I am alive!" to /tmp/my_process every 2 seconds
 while true
@@ -6,7 +6,7 @@ do
   echo "I am alive!" >> /tmp/my_process
   sleep 2
 done
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Path to the process PID file
 PID_FILE="/var/run/my_process.pid"
