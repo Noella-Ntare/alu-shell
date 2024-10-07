@@ -1,61 +1,29 @@
 #!/usr/bin/env bash
+# my process
 
-# Infinite loop to write "I am alive!" to /tmp/my_process every 2 seconds
-while true
-do
-  echo "I am alive!" >> /tmp/my_process
-  sleep 2
-done
-#!/usr/bin/env bash
+command="$1"
 
-# Path to the process PID file
-PID_FILE="/var/run/my_process.pid"
-PROCESS_SCRIPT="/path/to/manage_my_process"
+if [ -z "$command" ]; then
+  echo "Usage: manage_my_process {start|stop|restart}"
+  exit
+fi
 
-# Function to start the process
-start() {
-  if [ -f "$PID_FILE" ]; then
-    echo "Process is already running."
-  else
-    $PROCESS_SCRIPT &
-    echo $! > "$PID_FILE"
-    echo "manage_my_process started"
-  fi
-}
+if [ "$command" == "start" ]; then
 
-# Function to stop the process
-stop() {
-  if [ -f "$PID_FILE" ]; then
-    PID=$(cat "$PID_FILE")
-    kill "$PID"
-    rm "$PID_FILE"
-    echo "manage_my_process stopped"
-  else
-    echo "Process is not running."
-  fi
-}
+  bash ./manage_my_process &
+  echo "$!" > /var/run/my_process.pid
+  echo "manage_my_process started"
 
-# Function to restart the process
-restart() {
-  stop
-  start
+elif [ "$command" == "stop" ]; then
+  [ -e "/var/run/my_process.pid" ] && pkill -f './manage_my_process' && rm /var/run/my_process.pid
+  echo "manage_my_process stopped"
+
+elif [ "$command" == "restart" ]; then
+
+  "$0" stop >& /dev/null
+  "$0" start >& /dev/null
   echo "manage_my_process restarted"
-}
 
-# Check for valid input
-case "$1" in
-  start)
-    start
-    ;;
-  stop)
-    stop
-    ;;
-  restart)
-    restart
-    ;;
-  *)
-    echo "Usage: manage_my_process {start|stop|restart}"
-    exit 1
-    ;;
-esac
-	
+else
+  echo "Usage: manage_my_process {start|stop|restart}" 
+fi	
