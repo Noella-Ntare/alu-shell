@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-
+# This script manages the manage_my_process daemon, allowing you to start, stop, or restart the process.
 
 # File that stores the process ID
 PID_FILE="/var/run/my_process.pid"
-PROCESS_SCRIPT="/path/to/manage_my_process"  # Replace with actual path to manage_my_process
+PROCESS_SCRIPT="/alu-shell/processes_and_signals/manage_my_process"  # Replace with the actual path to manage_my_process
 
 # Function to start the process
 start() {
   if [ -f "$PID_FILE" ]; then
-    echo "Process is already running."
+    echo "manage_my_process already running."
   else
     $PROCESS_SCRIPT &
     echo $! > "$PID_FILE"
@@ -24,7 +24,7 @@ stop() {
     rm "$PID_FILE"
     echo "manage_my_process stopped"
   else
-    echo "Process is not running."
+    echo "manage_my_process is not running."
   fi
 }
 
@@ -35,7 +35,7 @@ restart() {
   echo "manage_my_process restarted"
 }
 
-# Usage message for incorrect arguments
+# Usage message for incorrect arguments or no argument
 usage() {
   echo "Usage: manage_my_process {start|stop|restart}"
 }
