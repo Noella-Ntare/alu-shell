@@ -1,24 +1,58 @@
 #!/usr/bin/env bash
-#Bash (init) script 11-manage_my_process that manages manage_my_process
-if [ "${1}" == "start" ]
-then
-    ./manage_my_process &
-    touch /var/run/my_process.pid
-    echo "$!" > /var/run/my_process.pid
+
+
+# File that stores the process ID
+PID_FILE="/var/run/my_process.pid"
+PROCESS_SCRIPT="/path/to/manage_my_process"  # Replace with actual path to manage_my_process
+
+# Function to start the process
+start() {
+  if [ -f "$PID_FILE" ]; then
+    echo "Process is already running."
+  else
+    $PROCESS_SCRIPT &
+    echo $! > "$PID_FILE"
     echo "manage_my_process started"
-elif [ "${1}" == "stop" ]
-then
+  fi
+}
+
+# Function to stop the process
+stop() {
+  if [ -f "$PID_FILE" ]; then
+    PID=$(cat "$PID_FILE")
+    kill "$PID"
+    rm "$PID_FILE"
     echo "manage_my_process stopped"
-    kill "$(cat /var/run/my_process.pid)"
-    rm /var/run/my_process.pid
-elif [ "${1}" == "restart" ]
-then
-    kill "$(cat /var/run/my_process.pid)"
-    rm /var/run/my_process.pid
-    ./manage_my_process &
-    touch /var/run/my_process.pid
-    echo "$!" > /var/run/my_process.pid
-    echo "manage_my_process restarted"
-else
-    echo "Usage: manage_my_process {start|stop|restart}"
-fi	
+  else
+    echo "Process is not running."
+  fi
+}
+
+# Function to restart the process
+restart() {
+  stop
+  start
+  echo "manage_my_process restarted"
+}
+
+# Usage message for incorrect arguments
+usage() {
+  echo "Usage: manage_my_process {start|stop|restart}"
+}
+
+# Main logic for handling arguments
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    usage
+    ;;
+esac
+
