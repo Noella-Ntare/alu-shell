@@ -10,24 +10,30 @@ start() {
   if [ -f "$PID_FILE" ]; then
     echo "manage_my_process already running."
   else
-    nohup $PROCESS_SCRIPT > /dev/null 2>&1 &  # Run as background process
-    echo $! > "$PID_FILE"
+    # Run manage_my_process in the background as its own process
+    nohup setsid $PROCESS_SCRIPT > /dev/null 2>&1 &
+    echo $! > "$PID_FILE"  # Save PID to the file
     echo "manage_my_process started"
   fi
 }
+
 
 
 # Function to stop the process
 stop() {
   if [ -f "$PID_FILE" ]; then
     PID=$(cat "$PID_FILE")
-    kill "$PID"
-    rm -f "$PID_FILE"  # Force remove the file
-    echo "manage_my_process stopped"
+    if kill "$PID" > /dev/null 2>&1; then
+      rm -f "$PID_FILE"  # Force remove the PID file
+      echo "manage_my_process stopped"
+    else
+      echo "Failed to stop manage_my_process."
+    fi
   else
     echo "manage_my_process is not running."
   fi
 }
+
 
 
 # Function to restart the process
