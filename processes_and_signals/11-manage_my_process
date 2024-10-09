@@ -23,12 +23,9 @@ start() {
 stop() {
   if [ -f "$PID_FILE" ]; then
     PID=$(cat "$PID_FILE")
-    if kill "$PID" > /dev/null 2>&1; then
-      rm -f "$PID_FILE"  # Force remove the PID file
-      echo "manage_my_process stopped"
-    else
-      echo "Failed to stop manage_my_process."
-    fi
+    kill "$PID"
+    rm -f "$PID_FILE"  # Force remove the file
+    echo "manage_my_process stopped"
   else
     echo "manage_my_process is not running."
   fi
