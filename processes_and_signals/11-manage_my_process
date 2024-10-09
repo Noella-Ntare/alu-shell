@@ -10,28 +10,30 @@ start() {
   if [ -f "$PID_FILE" ]; then
     echo "manage_my_process already running."
   else
-    $PROCESS_SCRIPT &
+    nohup $PROCESS_SCRIPT > /dev/null 2>&1 &  # Run as background process
     echo $! > "$PID_FILE"
     echo "manage_my_process started"
   fi
 }
+
 
 # Function to stop the process
 stop() {
   if [ -f "$PID_FILE" ]; then
     PID=$(cat "$PID_FILE")
     kill "$PID"
-    rm "$PID_FILE"
+    rm -f "$PID_FILE"  # Force remove the file
     echo "manage_my_process stopped"
   else
     echo "manage_my_process is not running."
   fi
 }
 
+
 # Function to restart the process
 restart() {
-  stop
-  start
+  stop > /dev/null 2>&1  # Suppress output from stop
+  start > /dev/null 2>&1 # Suppress output from start
   echo "manage_my_process restarted"
 }
 
@@ -55,4 +57,5 @@ case "$1" in
     usage
     ;;
 esac
+
 
